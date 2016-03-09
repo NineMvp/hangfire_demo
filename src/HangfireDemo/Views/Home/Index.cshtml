@@ -1,0 +1,161 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+@Styles.Render("~/Content/summernote")
+
+<div class="jumbotron">
+    <h2>Hangfire - Email Scheduler Demo</h2>
+    <p class="lead">Test Send Email</p>
+</div>
+
+<div class="row">
+    <div class="co"></div>
+</div>
+
+<div class="row">
+    @using (Html.BeginForm("AddEmailTask", "Home", FormMethod.Post, new { role = "form", @class = "form-horizontal" }))
+    {
+        <div class="form-group">
+            <label for="fromEmail" class="col-sm-2 control-label">From Email</label>
+            <div class="col-sm-4">
+                <input type="email" class="form-control" id="fromEmail" name="fromEmail" placeholder="Enter your email" value="" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="toEmail" class="col-sm-2 control-label">To Email</label>
+            <div class="col-sm-4">
+                <input type="email" class="form-control" name="toEmail" id="toEmail" placeholder="Enter receiver email" value="" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="subject" class="col-sm-2 control-label">Subject</label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control" name="subject" id="subject" placeholder="" value="test" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="body" class="col-sm-2 control-label">Body</label>
+            <div class="col-sm-10">
+                <textarea rows="8" cols="50" name="body" id="body" placeholder="" value=""></textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="sendMode" class="col-sm-2 control-label">Send Mode</label>
+            <div class="col-sm-10">
+                <select name="sendMode" id="sendMode" class="form-control">
+                    <option value="1">Now</option>
+                    <option value="2">Schedule by time</option>
+                    <option value="3">Recurring Job</option>
+                </select>
+                <input type="datetime" class="form-control" name="sendDate" id="sendDate" placeholder="yyyy-MM-dd hh:mm:ss" value="@DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss")" />
+                <select id="recurringType" name="recurringType" class="form-control">
+                    <option value="minutely">Minutely</option>
+                    <option value="hourly">Hourly</option>
+                    <option value="daily">Daily</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="monthly">Monthly</option>
+                    <option value="yearly">Yearly</option>
+                </select>
+                <div class="month recurr">  Month:<input type="number" min="0" max="12" step="1" id="month" name="month" value="0"  placeholder="Month" /> </div>
+                <div class="day recurr"> Day:<input type="number" min="0" max="31" step="1" id="day" name="day" value="0"  placeholder="Day" /></div>
+                <div class="dayOfWeek recurr"> DayOfWeek:<input type="number" min="0" max="7" step="1" id="dayOfWeek" name="dayOfWeek" value="0"  placeholder="DoW" /></div>
+                <div class="hour recurr"> Hour:<input type="number" min="0" max="23" step="1" id="hour" name="hour" value="0" placeholder="Hour" /></div>
+                <div class="minute recurr"> Minute:<input type="number" min="0" max="59" step="1" id="minute" name="minute" value="0" placeholder="Minute" /></div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-6">
+                <button type="submit" class="btn btn-default">Send Email</button>
+                <a class="btn btn-info preview">Preview</a>
+            </div>
+        </div>
+
+    }
+
+</div>
+
+@section scripts{
+    @Scripts.Render("~/bundle/summernote")
+
+    <script>
+        (function ($) {
+            function HomeIndex() {
+                var $this = this;
+
+                function initialize() {
+                    $('#body').summernote({
+                        focus: true,
+                        height: 150,
+                        codemirror: {
+                            theme: 'united'
+                        }
+                    });
+                }
+
+                $this.init = function () {
+                    initialize();
+                }
+            }
+
+            $(function () {
+                var self = new HomeIndex();
+                self.init();
+            })
+        }(jQuery))
+
+        $(document).ready(function () {
+
+            $('#sendDate').hide();
+            $('#recurringType').hide();
+            $('.recurr').hide();
+
+            $('#sendMode').change(function () {
+
+                $('#sendDate').hide();
+                $('#recurringType').hide();
+                $('.recurr').hide();
+
+                if ($(this).val() === '1') {
+                    $('#sendDate').hide();
+                    $('#recurringType').hide();
+                    $('.recurr').hide();
+                }
+                else if ($(this).val() === '2') {
+                    $('#sendDate').show();
+                }
+                else if ($(this).val() === '3') {
+                    $('#recurringType').show();
+                }
+
+            })
+
+            $('#recurringType').change(function () {
+                $('.recurr').hide();
+                $('.recurr').val(0);
+
+                if ($(this).val() === 'hourly') {
+                    $('.minute').show();
+                }
+                else if ($(this).val() === 'daily') {
+                    $('.hour').show();
+                    $('.minute').show();
+                } else if ($(this).val() === 'weekly') {
+                    $('.dayOfWeek').show();
+                    $('.hour').show();
+                    $('.minute').show();
+                } else if ($(this).val() === 'monthly') {
+                    $('.day').show();
+                    $('.hour').show();
+                    $('.minute').show();
+                } else if ($(this).val() === 'yearly') {
+                    $('.month').show();
+                    $('.day').show();
+                    $('.hour').show();
+                    $('.minute').show();
+                }
+
+            })
+        })
+    </script>
+}
