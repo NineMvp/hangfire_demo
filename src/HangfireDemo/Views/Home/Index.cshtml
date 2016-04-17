@@ -14,7 +14,7 @@
 </div>
 
 <div class="row">
-    @using (Html.BeginForm("AddEmailTask", "Home", FormMethod.Post, new { role = "form", @class = "form-horizontal" }))
+    @using (Html.BeginForm("AddEmailTask", "Home", FormMethod.Post, new { id="emailform", role = "form", @class = "form-horizontal" }))
     {
         <div class="form-group">
             <label for="fromEmail" class="col-sm-2 control-label">From Email</label>
@@ -31,13 +31,13 @@
         <div class="form-group">
             <label for="subject" class="col-sm-2 control-label">Subject</label>
             <div class="col-sm-4">
-                <input type="text" class="form-control" name="subject" id="subject" placeholder="" value="test" />
+                <input type="text" class="form-control" name="subject" id="subject" placeholder="" value="test"  />
             </div>
         </div>
         <div class="form-group">
             <label for="body" class="col-sm-2 control-label">Body</label>
             <div class="col-sm-10">
-                <textarea rows="8" cols="50" name="body" id="body" placeholder="" value=""></textarea>
+                <textarea rows="8" cols="50" name="body" id="body" placeholder="" value="" ></textarea>
             </div>
         </div>
         <div class="form-group">
@@ -49,7 +49,7 @@
                     <option value="3">Recurring Job</option>
                 </select>
                 <input type="datetime" class="form-control" name="sendDate" id="sendDate" placeholder="yyyy-MM-dd hh:mm:ss" value="@DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss")" />
-                <select id="recurringType" name="recurringType" class="form-control">
+                <select id="recurringType" name="recurringType" class="form-control" >
                     <option value="minutely">Minutely</option>
                     <option value="hourly">Hourly</option>
                     <option value="daily">Daily</option>
@@ -67,7 +67,6 @@
         <div class="form-group">
             <div class="col-sm-offset-2 col-sm-6">
                 <button type="submit" class="btn btn-default">Send Email</button>
-                <a class="btn btn-info preview">Preview</a>
             </div>
         </div>
 
@@ -109,6 +108,20 @@
             $('#sendDate').hide();
             $('#recurringType').hide();
             $('.recurr').hide();
+
+            $('#emailform').submit(function(e) {
+                e.preventDefault()
+                //var form = $('#emailform')[0]; // You need to use standart javascript object here
+                //var formData = new FormData(form);
+                $.post('@Url.Action("AddEmailTask")', $("#emailform").serialize(), function (data) {
+                    if (data.ok) {
+                        alert("OK");
+                    } else {
+                        alert(data.msg);
+                    }
+                });
+
+            })
 
             $('#sendMode').change(function () {
 

@@ -4,10 +4,8 @@ using System.Configuration;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
-using System.Web;
 using System.Web.WebPages;
 using HangfireDemo.Models;
-using Postal;
 
 namespace HangfireDemo
 {
@@ -19,7 +17,7 @@ namespace HangfireDemo
             {
                 using (var db = new ApplicationDbContext())
                 {
-                    var email = db.EmailMessages.SingleOrDefault(o => o.Id == id);
+                    var email = db.EmailMessages.SingleOrDefault(o => o.Id == id && o.Status != 2);
                     if (email != null)
                     {
 
